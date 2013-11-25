@@ -1,0 +1,35 @@
+body {
+    font-family: monospace;
+    font-weight: bold;
+}
+
+#commandline {
+    border-bottom: 1px solid black;
+}
+
+input:focus{
+    outline:none;
+}
+
+#command {
+    border: none;
+    width: 80%;
+    overflow: hidden;
+}
+
+
+#console {
+    position: absolute;
+    bottom: 20px;
+    overflow-x: auto;
+    top: 200px;
+    width: 99%;
+}
+
+.red {
+    color: red;
+}
+
+.green {
+    color: green;
+}

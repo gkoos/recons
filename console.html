@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>recons.js - Javascript Remote Console</title>
+        
+        <link rel="stylesheet" type="text/css" href="/console.css">
+    </head>
+    <body>
+        <h1>Javascript Remote Console</h1>
+        <div id="version"></div>
+        <div id="guid"></div>
+        <div id="status"><span class="red">Connecting to server...</span></div>
+        <br>
+        <div id="commandline">
+            &gt;&nbsp;<input type="text" id="command" name="command" autofocus="autofocus">
+        </div>
+        
+        <pre><div id="console">Remote Javascript console version 0.2.0
+ type :help for available options
+ 
+</div></pre>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="/console.js"></script>
+    </body>
+</html>
