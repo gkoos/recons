@@ -1,5 +1,5 @@
-var serverUrl = 'https://demo-project-c9-gaborkoos.c9.io';
-var version = '0.2.0';
+var serverUrl = '{{serverUrl}}';
+var version = '{{version}}';
 
 var getGuid = function() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {

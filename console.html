@@ -8,15 +8,15 @@
     </head>
     <body>
         <h1>Javascript Remote Console</h1>
-        <div id="version"></div>
-        <div id="guid"></div>
+        <div id="version">version {{version}}</div>
+        <div id="guid">guid = </div>
         <div id="status"><span class="red">Connecting to server...</span></div>
         <br>
         <div id="commandline">
             &gt;&nbsp;<input type="text" id="command" name="command" autofocus="autofocus">
         </div>
         
-        <pre><div id="console">Remote Javascript console version 0.2.0
+        <pre><div id="console">Remote Javascript console version {{version}}
  type :help for available options
  
 </div></pre>
