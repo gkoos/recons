@@ -3,8 +3,7 @@
   "version": "0.2.2",
   "author": "Gabor Koos <gabor.koos@gmail.com>",
   "dependencies": {
-    "socket.io": "x.x.x",
-    "require"  : "2.x.x"
+    "socket.io": "x.x.x"
   },
   "main": "server.js",
   "private": true
