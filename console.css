@@ -1,6 +1,7 @@
 body {
     font-family: monospace;
     font-weight: bold;
+    font-size: 14px;
 }
 
 #commandline {
@@ -22,7 +23,7 @@ input:focus{
     position: absolute;
     bottom: 20px;
     overflow-x: auto;
-    top: 200px;
+    top: 160px;
     width: 99%;
 }
 
@@ -32,4 +33,16 @@ input:focus{
 
 .green {
     color: green;
+}
+
+.info {
+    color: blue;
+}
+
+.warn {
+    color: yellow;
+}
+
+.error {
+    color: red;
 }

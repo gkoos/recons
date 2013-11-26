@@ -3,7 +3,6 @@ var path = require('path');
 var fs   = require('fs');
 var url  = require("url");
 var sck  = require("socket.io");
-var request = require("request");
 
 // "template" variables
 var tplVars = {
@@ -27,27 +26,21 @@ var app = http.createServer(function (req, res) {
     if (uri === '/') uri = '/console.html';
     var fn = __dirname + uri;
     var ext = path.extname(fn);
-    
+
     fs.readFile(__dirname + uri, 'utf-8', function (error, data) {
+        if (!data) {
+            data = ''; // workaround for earlier chrome versions always requesting /favicon.ico
+        }
+        
         // substitute template vars with their values
         for (var varName in tplVars) {
             var regex = new RegExp('{{' + varName + '}}', 'g');
             data = data.replace(regex, tplVars[varName]);
         }
 
-        // a terrible hack to merge socket.io.js and recons.js
-        if (uri === '/recons.js') {
-            request(tplVars.serverUrl + '/socket.io/socket.io.js', function(error, response, body) {
-                res.writeHead(200, {'Content-Type': extensions[ext]});
-                res.write(body + '\n' +data);
-                res.end();
-            });
-        }
-        else {
-            res.writeHead(200, {'Content-Type': extensions[ext]});
-            res.write(data);
-            res.end();
-        }
+        res.writeHead(200, {'Content-Type': extensions[ext]});
+        res.write(data);
+        res.end();
     });
 }).listen(process.env.PORT, process.env.IP);
 
@@ -56,7 +49,7 @@ var io = sck.listen(app);
  
 io.sockets.on('connection', function(socket) {
     socket.on('message_to_server', function(data) {
-        io.sockets.emit("message_to_client", {guid: data.guid, message: data.message });
+        io.sockets.emit("message_to_client", {guid: data.guid, message: data.message, level: data.level });
     });
     
     socket.on('command_to_server', function(data) {
