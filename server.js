@@ -22,23 +22,26 @@ var extensions = {
 
 // serving static content
 var app = http.createServer(function (req, res) {
+    var status = 200;
     var uri = url.parse(req.url).pathname;
     if (uri === '/') uri = '/console.html';
-    var fn = __dirname + uri;
+    var fn = __dirname + '/public' + uri;
     var ext = path.extname(fn);
 
-    fs.readFile(__dirname + uri, 'utf-8', function (error, data) {
+    fs.readFile(fn, 'utf-8', function (error, data) {
         if (!data) {
-            data = ''; // workaround for earlier chrome versions always requesting /favicon.ico
+            status = 404; // handling not found
+            data = '404 - page not found';
+        }
+        else {
+            // substitute template vars with their values
+            for (var varName in tplVars) {
+                var regex = new RegExp('{{' + varName + '}}', 'g');
+                data = data.replace(regex, tplVars[varName]);
+            }
         }
         
-        // substitute template vars with their values
-        for (var varName in tplVars) {
-            var regex = new RegExp('{{' + varName + '}}', 'g');
-            data = data.replace(regex, tplVars[varName]);
-        }
-
-        res.writeHead(200, {'Content-Type': extensions[ext]});
+        res.writeHead(status, {'Content-Type': extensions[ext]});
         res.write(data);
         res.end();
     });

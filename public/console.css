@@ -46,3 +46,7 @@ input:focus{
 .error {
     color: red;
 }
+
+.debug {
+    color: blue;
+}
