@@ -2,7 +2,7 @@ recons
 ======
 
 `recons` is a remote javascript console inspired by [jsconsole](http://jsconsole.com)
-You can install `recons` yourself or use a hosted version at http://recons.tk (NOT WORKING AT THE MOMENT!) 
+You can install `recons` yourself or use a hosted version at http://recons.tk 
 
 Features
 --------
