@@ -50,6 +50,30 @@ document.getElementById('guid').innerHTML = 'guid = ' + guid;
 var $cmd = document.getElementById('command');
 var $console = document.getElementById('console');
 
+function parseLocalCommand(cmd) {
+    var parsed = {};
+    var pos = cmd.indexOf(" ");
+    
+    if (pos == -1) {
+        parsed = {command: cmd, param1: '', param2: ''};
+    }
+    else {
+        parsed.command = cmd.substr(0, pos);
+        var params = cmd.substr(pos + 1);
+        pos = params.indexOf(" ");
+        if (pos == -1) {
+            parsed.param1 = params;
+            parsed.param2 = '';
+        }
+        else {
+            parsed.param1 = params.substr(0, pos);
+            parsed.param2 = params.substr(pos + 1);
+        }
+    }
+
+    return parsed;
+}
+
 function parseCommand(cmd) {
     cmd = cmd.trim();
     if (cmd) {
@@ -58,35 +82,45 @@ function parseCommand(cmd) {
             consHistoryPos = consHistory.length;
         }
         
-        if (cmd.charAt(0) === ':') {
-            switch(cmd) {
+        if (cmd.charAt(0) === ':') { // it is a local command
+            cmd = parseLocalCommand(cmd);
+            var output = '';
+            switch(cmd.command) {
                 case ':history':
-                    var output = 'Local history:\n\n';
+                    output = 'Local history:\n\n';
                     for (var i=0; i<consHistory.length; i++) {
                         output += consHistory[i] + '\n\n';
                     }
-                    return output;
                     break;
                 case ':guid':
-                    return guidText();
+                    if (cmd.param1) {
+                        guid = cmd.param1 === 'new' ? getGuid() : cmd.param1;
+                        document.getElementById('guid').innerHTML = 'guid = ' + guid;
+                    }
+                    output = guidText();
                     break;
                 case ':help':
-                    return '\
+                    output = '\
 Help - Available commands:\n\
  :help - displays this message\n\
  :guid - shows the guid the server listens to\n\
+ :guid new - generates a new guid\n\
+ :guid <id> - sets the guid to <id>, eg. :guid partytime-aaed-08a5\n\
  :clear - clears display window\n\
  :history - display history of local commands\n\
  Everything not starting width : goes to your application\n\n';
                     break;
                 case ':clear':
                     $console.innerHTML = '';
-                    return '';
+                    output = '';
+                    break;
                 default:
-                    return 'Error: unknown command ' + cmd + '\n\n';
+                    output = 'Error: unknown command ' + cmd + '\n\n';
             }
+            
+            return output;
         }
-        else {
+        else { // remote command: send to the server
             socket.emit('command_to_server', {guid: guid, message: cmd});
             return '\
 Sending command:\n\
