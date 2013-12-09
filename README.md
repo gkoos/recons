@@ -14,7 +14,7 @@ Features
 Usage
 -----
 
-Recons is heavily inspired by [jsconsole](http://jsconsole.com). In fact, they share the same overall functionality, the way you embed them in your code, even most of the console commands are similar. The only significant difference is in the implementation: while jsconsole utilizes iframes, `recons` uses the [socket.io](http://socket.io) library.
+Recons is heavily inspired by [jsconsole](http://jsconsole.com). In fact, they share the same overall functionality, the way you embed them in your code, even most of the console commands are similar. The only significant difference is in the implementation: while jsconsole utilizes iframes, `recons` uses server sent events and CORS ajax calls. (The previous versions used the [socket.io](http://socket.io) library, however it caused unwanted dependencies. Nevertheless, socket.io is a great library.)
 The application and the remote console are connected via an id. Application(s) with the same id broadcast to the console window(s) listening to that id and the other way around.
 Opening a fresh console window provides a new id in the [guid](http://en.wikipedia.org/wiki/Globally_unique_identifier) format unless set one explicitly. This can be obtained by concatenating the id after the console window url, for example
 http://recons.tk?my-own-id
@@ -22,11 +22,10 @@ http://recons.tk?my-own-id
 Once the id is given, you can inject the client-side code by adding 
 
     <!-- start of remote console code -->
-    <script src="https://demo-project-c9-gaborkoos.c9.io/socket.io/socket.io.js"></script>
-    <script src="https://demo-project-c9-gaborkoos.c9.io/recons.js?id"></script>
+    <script src="{console url}/recons.js?id"></script>
     <!-- end of remote console code --> 
 
-to your source code, before any other script tag. Obviously, in case of hosting `recons` somewhere else the recons.tk part changes accordingly.
+to your source code, before any other script tag.
 
 When done, browsing your application you are able to see the console messages in your recons window from where you are also able to send back javascript commands that execute in the context of the application being observed.
 
