@@ -8,7 +8,6 @@ function guidText() {
 This server listens on ' + guid + '.\n\
  You can watch console events if you include this script in your code:\n\n\
 &lt;!-- start of remote console code --&gt;\n\
-&lt;script src="{{serverUrl}}/socket.io/socket.io.js"&gt;&lt;/script&gt;\n\
 &lt;script src="{{serverUrl}}/recons.js?' + guid + '"&gt;&lt;/script&gt;\n\
 &lt;!-- end of remote console code --&gt;\n\n';
 }
@@ -121,7 +120,15 @@ Help - Available commands:\n\
             return output;
         }
         else { // remote command: send to the server
-            socket.emit('command_to_server', {guid: guid, message: cmd});
+        var xmlhttp=new XMLHttpRequest();
+            var url = serverUrl + '/msg/app/' + guid;
+            var params = JSON.stringify({msg: cmd});
+            xmlhttp.open("POST", url, true);
+            xmlhttp.setRequestHeader('Content-type','application/json; charset=utf-8');
+            xmlhttp.setRequestHeader("Content-length", params.length);
+            xmlhttp.setRequestHeader("Connection", "close");
+            xmlhttp.send(params);
+            
             return '\
 Sending command:\n\
  ' + cmd +'\n\n';
@@ -133,21 +140,19 @@ Sending command:\n\
 }
 
 
-var socket = io.connect(serverUrl);
-
-socket.on('connect', function(){
+var source = new EventSource('/sse/console/' + guid);
+source.addEventListener('open', function(e) {
     document.getElementById('status').innerHTML = '<span class="green">Connected to server.</span>';
     $console.innerHTML += guidText();
     $console.scrollTop = $console.scrollHeight; // scroll down
-});
+}, false);
+source.addEventListener('message', function(e) {
+    var data = JSON.parse(e.data);
+    var output = data.level === 'log' ? '' : '<span class="' + data.level + '">' + data.level + ':</span>\n';
+    $console.innerHTML += output + data.msg + '\n\n';
+    $console.scrollTop = $console.scrollHeight; // scroll down
+}, false);
 
-socket.on('message_to_client', function (data) {
-    if (guid === data.guid) {
-        var output = data.level === 'log' ? '' : '<span class="' + data.level + '">' + data.level + ':</span>\n';
-        $console.innerHTML += output + data.message+'\n\n';
-        $console.scrollTop = $console.scrollHeight; // scroll down
-    }
-});
 
 $cmd.onkeydown = function(e) {
     var code = e.keyCode || e.which || e.charCode || 0;

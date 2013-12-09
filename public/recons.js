@@ -76,18 +76,17 @@ function stringify(o, simple) {
     
     var guid = getGuid();
     
-    var socket = io.connect(url);
-    socket.on('connect', function() {
+    var source = new EventSource(url + '/sse/app/' + guid);
+    source.addEventListener('open', function(e) {
         if (firstConnect) {
             alert("Connected to recons remote console!");
             firstConnect = false;
         }
-    });
-    
-    socket.on('command_to_client', function(data) {
-        eval(data.message);
-    });
-    
+    }, false);
+    source.addEventListener('message', function(e) {
+        eval(JSON.parse(e.data).msg);
+    }, false);
+
     var newConsoleMethod = function(oldConsoleLog, level) {
         return function(data) {
             if (oldConsoleLog !== undefined) {
@@ -96,7 +95,14 @@ function stringify(o, simple) {
             
             var text = stringify(data);
     
-            socket.emit('message_to_server', {guid: guid, message: text, level: level});
+            var xmlhttp=new XMLHttpRequest();
+            var requrl = url + '/msg/console/' + guid;
+            var params = JSON.stringify({level: level, msg: text});
+            xmlhttp.open("POST", requrl, true);
+            xmlhttp.setRequestHeader('Content-type','application/json; charset=utf-8');
+            xmlhttp.setRequestHeader("Content-length", params.length);
+            xmlhttp.setRequestHeader("Connection", "close");
+            xmlhttp.send(params);
         };
     };
     
